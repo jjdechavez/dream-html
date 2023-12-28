@@ -129,6 +129,53 @@ You can also embed HTML comments in the generated document:
 div [] [comment "TODO: xyz."; p [] [txt "Hello!"]]
 ```
 
+Incorporating htmx into your project involves including its script in the HTML head tag. You can choose between leveraging a CDN or downloading a local copy and adding it to your project's assets or static directory.
+
+Via CDN
+
+```ocaml
+let page req =
+  let open Dream_html in
+  let open HTML in
+  html [lang "en"] [
+    head [] [
+      title [] "Dream-html"
+      ; script
+        [ src "https://unpkg.com/htmx.org@1.9.10"
+        ; integrity "sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC"
+        ; crossorigin `anonymous
+        ]
+        ""
+      ];
+  ]
+
+let () =
+  Dream.run
+  @@ Dream.router
+       [ Dream.get "/" (fun _ -> Dream_html.respond page ) ]
+```
+
+Download a copy
+
+```ocaml
+let page req =
+  let open Dream_html in
+  let open HTML in
+  html [lang "en"] [
+    head [] [
+      title [] "Dream-html"
+      ; script [ src "/static/htmx.min.js" ] ""
+      ];
+  ]
+
+let () =
+  Dream.run
+  @@ Dream.router
+       [ Dream.get "/static/**" (Dream.static "static")
+       ; Dream.get "/" (fun _ -> Dream_html.respond page )
+       ]
+```
+
 ## Explore in the REPL
 
 ```
